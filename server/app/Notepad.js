@@ -1,5 +1,4 @@
 
-
 Ext.define('app.Notepad', {
 	extend : 'desktop.Module',
 	id : 'notepad',
@@ -60,19 +59,21 @@ Ext.define('app.Notepad', {
 				_btn_bt : {
 
 					click : function() {
-						var fdist = btn_hola.getSize();
-						console.log(fdist);
+						//var fdist = btn_hola.getSize();
+						console.log('fdist');
 					}
 				},
 				listeners : {
 					afterrender : function() {
-						this.self = this;
+						// this.self = this;
 						var items = this.items.items
 
 						for (var i = 0; i < items.length; i++) {
 							var id = items[i].id;
-							self[id] = Ext.get(id);
-							self[id].on(this['_' + id]);
+							Ext.get(id).on(this['_' + id]);
+
+							// self[id] = Ext.get(id);
+							// self[id].on(this['_' + id]);
 						}
 					}
 				}

@@ -24,20 +24,10 @@ Ext.define('desktop.App', {
 
 	constructor : function(config) {
 		var me = this;
-		me.addEvents('ready', 'beforeunload');
-
-		me.mixins.observable.constructor.call(this, config);
-
-		if (Ext.isReady) {
-			Ext.Function.defer(me.init, 10, me);
-		} else {
-			Ext.onReady(me.init, me);
-		}
-	},
-
-	init : function() {
-		var me = this;
 		var desktopCfg;
+
+		me.addEvents('ready', 'beforeunload');
+		me.mixins.observable.constructor.call(this, config);
 
 		if (me.useQuickTips) {
 			Ext.QuickTips.init();
