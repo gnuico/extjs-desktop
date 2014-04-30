@@ -1,16 +1,11 @@
-/*!
- * Ext JS Library 4.0
- * Copyright(c) 2006-2011 Sencha Inc.
- * licensing@sencha.com
- * http://www.sencha.com/license
- */
 
 Ext.require([//
 'desktop.Desktop', //
 'desktop.ShortcutModel',//	
 'desktop.StartMenu',//
 'desktop.TaskBar',//
-'desktop.Wallpaper'//
+'desktop.Wallpaper',//
+'desktop.TrayClock'//
 ]);//
 
 Ext.define('desktop.App', {
@@ -75,18 +70,23 @@ Ext.define('desktop.App', {
 	 * the config and then modify the returned object before returning it.
 	 */
 	getStartConfig : function() {
-		var me = this, cfg = {
+		var me = this;
+		var cfg = {
 			app : me,
 			menu : []
-		}, launcher;
+		};
+		var launcher;
 
 		Ext.apply(cfg, me.startConfig);
 
 		Ext.each(me.modules, function(module) {
+			
 			launcher = module.launcher;
+			
 			if (launcher) {
 				launcher.handler = launcher.handler
 						|| Ext.bind(me.createWindow, me, [ module ]);
+				
 				cfg.menu.push(module.launcher);
 			}
 		});
@@ -105,7 +105,8 @@ Ext.define('desktop.App', {
 	 * and then modify the returned object before returning it.
 	 */
 	getTaskbarConfig : function() {
-		var me = this, cfg = {
+		var me = this;
+		var cfg = {
 			app : me,
 			startConfig : me.getStartConfig()
 		};

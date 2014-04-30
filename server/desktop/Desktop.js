@@ -75,67 +75,126 @@ Ext
 
 					windowMenu : null,
 
+					lst_windows : Object,
+
+					constructor : function() {
+
+						this.lst_windows = new Ext.util.MixedCollection();
+
+						this.callParent(arguments);
+					},
+
 					initComponent : function() {
-						var me = this;
 
-						me.windowMenu = new Ext.menu.Menu(me.createWindowMenu());
+						this.windowMenu = new Ext.menu.Menu(
+								{
+									defaultAlign : 'br-tr',
 
-						me.bbar = me.taskbar = new desktop.TaskBar(
-								me.taskbarConfig);
-						me.taskbar.windowMenu = me.windowMenu;
+									items : [ {
+										text : 'Restore',
+										handler : function() {
+											var win = this.windowMenu.theWin;
+											this.restoreWindow(win);
+										},
+										scope : this
+									}, {
+										text : 'Minimize',
+										handler : function() {
+											var win = this.windowMenu.theWin;
+											win.minimize();
+										},
+										scope : this
+									}, {
+										text : 'Maximize',
+										handler : function() {
+											var win = this.windowMenu.theWin;
+											win.maximize();
+											win.toFront();
+										},
+										scope : this
+									}, '-', {
+										text : 'Close',
+										handler : function() {
+											var win = this.windowMenu.theWin;
+											win.close();
+										},
+										scope : this
+									} ],
+									listeners : {
+										beforeshow : function(menu) {
+											var items = menu.items.items, win = menu.theWin;
+											items[0]
+													.setDisabled(win.maximized !== true
+															&& win.hidden !== true); // Restore
+											items[1]
+													.setDisabled(win.minimized === true); // Minimize
+											items[2]
+													.setDisabled(win.maximized === true
+															|| win.hidden === true); // Maximize
+										},
+										hide : function(menu) {
+											Ext.defer(function() {
+												menu.theWin = null;
+											}, 1);
+										},
+										scope : this
+									}
+								});
 
-						me.windows = new Ext.util.MixedCollection();
+						this.taskbar = new desktop.TaskBar(this.taskbarConfig);
+						this.taskbar.windowMenu = this.windowMenu;
+						this.bbar = this.taskbar;
 
-						me.contextMenu = new Ext.menu.Menu(me
+						this.contextMenu = new Ext.menu.Menu(this
 								.createDesktopMenu());
 
-						me.items = [ {
+						this.items = [ {
 							xtype : 'wallpaper',
-							id : me.id + '_wallpaper'
-						}, me.createDataView() ];
+							id : this.id + '_wallpaper'
+						}, this.createDataView() ];
 
-						me.callParent();
+						this.callParent();
 
-						me.shortcutsView = me.items.getAt(1);
-						me.shortcutsView.on('itemclick',
-								me.onShortcutItemClick, me);
+						this.shortcutsView = this.items.getAt(1);
 
-						var wallpaper = me.wallpaper;
-						me.wallpaper = me.items.getAt(0);
-						if (wallpaper) {
-							me.setWallpaper(wallpaper, me.wallpaperStretch);
-						}
+						this.shortcutsView.on('itemclick',
+								this.onShortcutItemClick, this);
+
+						var wallpaper = this.wallpaper;
+						this.wallpaper = this.items.getAt(0);
+						this.setWallpaper(wallpaper, this.wallpaperStretch);
+
 					},
 
 					afterRender : function() {
-						var me = this;
-						me.callParent();
-						me.el.on('contextmenu', me.onDesktopMenu, me);
+
+						this.callParent();
+						this.el.on('contextmenu', this.onDesktopMenu, this);
 					},
 
 					// ------------------------------------------------------
 					// Overrideable configuration creation methods
 
 					createDataView : function() {
-						var me = this;
+
 						return {
 							xtype : 'dataview',
 							overItemCls : 'x-view-over',
 							trackOver : true,
-							itemSelector : me.shortcutItemSelector,
-							store : me.shortcuts,
+							itemSelector : this.shortcutItemSelector,
+							store : this.shortcuts,
 							style : {
 								position : 'absolute'
 							},
 							x : 0,
 							y : 0,
-							tpl : new Ext.XTemplate(me.shortcutTpl)
+							tpl : new Ext.XTemplate(this.shortcutTpl)
 						};
 					},
 
 					createDesktopMenu : function() {
-						var me = this, ret = {
-							items : me.contextMenuItems || []
+						var ret = {
+							items : this.contextMenuItems || []
 						};
 
 						if (ret.items.length) {
@@ -144,64 +203,35 @@ Ext
 
 						ret.items.push({
 							text : 'Tile',
-							handler : me.tileWindows,
-							scope : me,
+							handler : this.tileWindows,
+							scope : this,
 							minWindows : 1
 						}, {
 							text : 'Cascade',
-							handler : me.cascadeWindows,
-							scope : me,
+							handler : this.cascadeWindows,
+							scope : this,
 							minWindows : 1
 						})
 
 						return ret;
 					},
 
-					createWindowMenu : function() {
-						var me = this;
-						return {
-							defaultAlign : 'br-tr',
-							items : [ {
-								text : 'Restore',
-								handler : me.onWindowMenuRestore,
-								scope : me
-							}, {
-								text : 'Minimize',
-								handler : me.onWindowMenuMinimize,
-								scope : me
-							}, {
-								text : 'Maximize',
-								handler : me.onWindowMenuMaximize,
-								scope : me
-							}, '-', {
-								text : 'Close',
-								handler : me.onWindowMenuClose,
-								scope : me
-							} ],
-							listeners : {
-								beforeshow : me.onWindowMenuBeforeShow,
-								hide : me.onWindowMenuHide,
-								scope : me
-							}
-						};
-					},
-
 					// ------------------------------------------------------
 					// Event handler methods
 
 					onDesktopMenu : function(e) {
-						var me = this, menu = me.contextMenu;
+						var menu = this.contextMenu;
 						e.stopEvent();
 						if (!menu.rendered) {
-							menu.on('beforeshow', me.onDesktopMenuBeforeShow,
-									me);
+							menu.on('beforeshow', this.onDesktopMenuBeforeShow,
+									this);
 						}
 						menu.showAt(e.getXY());
 						menu.doConstrain();
 					},
 
 					onDesktopMenuBeforeShow : function(menu) {
-						var me = this, count = me.windows.getCount();
+						var count = this.lst_windows.getCount();
 
 						menu.items.each(function(item) {
 							var min = item.minWindows || 0;
@@ -210,64 +240,23 @@ Ext
 					},
 
 					onShortcutItemClick : function(dataView, record) {
-						var me = this, module = me.app
-								.getModule(record.data.module), win = module
+						var module = this.app.getModule(record.data.module), win = module
 								&& module.createWindow();
 
 						if (win) {
-							me.restoreWindow(win);
+							this.restoreWindow(win);
 						}
 					},
 
 					onWindowClose : function(win) {
-						var me = this;
-						me.windows.remove(win);
-						me.taskbar.removeTaskButton(win.taskButton);
-						me.updateActiveWindow();
+
+						this.lst_windows.remove(win);
+						this.taskbar.removeTaskButton(win.taskButton);
+						this.updateActiveWindow();
 					},
 
 					// ------------------------------------------------------
 					// Window context menu handlers
-
-					onWindowMenuBeforeShow : function(menu) {
-						var items = menu.items.items, win = menu.theWin;
-						items[0].setDisabled(win.maximized !== true
-								&& win.hidden !== true); // Restore
-						items[1].setDisabled(win.minimized === true); // Minimize
-						items[2].setDisabled(win.maximized === true
-								|| win.hidden === true); // Maximize
-					},
-
-					onWindowMenuClose : function() {
-						var me = this, win = me.windowMenu.theWin;
-
-						win.close();
-					},
-
-					onWindowMenuHide : function(menu) {
-						Ext.defer(function() {
-							menu.theWin = null;
-						}, 1);
-					},
-
-					onWindowMenuMaximize : function() {
-						var me = this, win = me.windowMenu.theWin;
-
-						win.maximize();
-						win.toFront();
-					},
-
-					onWindowMenuMinimize : function() {
-						var me = this, win = me.windowMenu.theWin;
-
-						win.minimize();
-					},
-
-					onWindowMenuRestore : function() {
-						var me = this, win = me.windowMenu.theWin;
-
-						me.restoreWindow(win);
-					},
 
 					// ------------------------------------------------------
 					// Dynamic (re)configuration methods
@@ -277,10 +266,10 @@ Ext
 					},
 
 					setTickSize : function(xTickSize, yTickSize) {
-						var me = this, xt = me.xTickSize = xTickSize, yt = me.yTickSize = (arguments.length > 1) ? yTickSize
+						var xt = this.xTickSize = xTickSize, yt = this.yTickSize = (arguments.length > 1) ? yTickSize
 								: xt;
 
-						me.windows.each(function(win) {
+						this.lst_windows.each(function(win) {
 							var dd = win.dd, resizer = win.resizer;
 							dd.xTickSize = xt;
 							dd.yTickSize = yt;
@@ -311,7 +300,7 @@ Ext
 					},
 
 					createWindow : function(config, cls) {
-						var me = this, win;
+						var win;
 						var cfg = Ext.applyIf(config || {}, {
 							stateful : false,
 							isWindow : true,
@@ -321,36 +310,37 @@ Ext
 						});
 
 						cls = cls || Ext.window.Window;
-						win = me.add(new cls(cfg));
+						win = this.add(new cls(cfg));
 
-						me.windows.add(win);
+						this.lst_windows.add(win);
 
-						win.taskButton = me.taskbar.addTaskButton(win);
+						win.taskButton = this.taskbar.addTaskButton(win);
 						win.animateTarget = win.taskButton.el;
 
 						win.on({
-							activate : me.updateActiveWindow,
-							beforeshow : me.updateActiveWindow,
-							deactivate : me.updateActiveWindow,
-							minimize : me.minimizeWindow,
-							destroy : me.onWindowClose,
-							scope : me
+							activate : this.updateActiveWindow,
+							beforeshow : this.updateActiveWindow,
+							deactivate : this.updateActiveWindow,
+							minimize : this.minimizeWindow,
+							destroy : this.onWindowClose,
+							scope : this
 						});
 
-						win.on({
-							boxready : function() {
-								win.dd.xTickSize = me.xTickSize;
-								win.dd.yTickSize = me.yTickSize;
+						win
+								.on({
+									boxready : function() {
+										win.dd.xTickSize = this.xTickSize;
+										win.dd.yTickSize = this.yTickSize;
 
-								if (win.resizer) {
-									win.resizer.widthIncrement = me.xTickSize;
-									win.resizer.heightIncrement = me.yTickSize;
-								}
-							},
-							single : true
-						});
+										if (win.resizer) {
+											win.resizer.widthIncrement = this.xTickSize;
+											win.resizer.heightIncrement = this.yTickSize;
+										}
+									},
+									single : true
+								});
 
-						// replace normal window close w/fadeOut animation:
+						
 						win.doClose = function() {
 							win.doClose = Ext.emptyFn; // dblclick can call
 							// again...
@@ -388,14 +378,15 @@ Ext
 					},
 
 					getDesktopZIndexManager : function() {
-						var windows = this.windows;
+
 						// TODO - there has to be a better way to get this...
-						return (windows.getCount() && windows.getAt(0).zIndexManager)
+						return (this.lst_windows.getCount() && this.lst_windows
+								.getAt(0).zIndexManager)
 								|| null;
 					},
 
 					getWindow : function(id) {
-						return this.windows.get(id);
+						return this.lst_windows.get(id);
 					},
 
 					minimizeWindow : function(win) {
@@ -414,53 +405,53 @@ Ext
 					},
 
 					tileWindows : function() {
-						var me = this, availWidth = me.body.getWidth(true);
-						var x = me.xTickSize, y = me.yTickSize, nextY = y;
+						var availWidth = this.body.getWidth(true);
+						var x = this.xTickSize, y = this.yTickSize, nextY = y;
 
-						me.windows.each(function(win) {
+						this.lst_windows.each(function(win) {
 							if (win.isVisible() && !win.maximized) {
 								var w = win.el.getWidth();
 
 								// Wrap to next row if we are not at the line
 								// start and this Window will
 								// go off the end
-								if (x > me.xTickSize && x + w > availWidth) {
-									x = me.xTickSize;
+								if (x > this.xTickSize && x + w > availWidth) {
+									x = this.xTickSize;
 									y = nextY;
 								}
 
 								win.setPosition(x, y);
-								x += w + me.xTickSize;
+								x += w + this.xTickSize;
 								nextY = Math.max(nextY, y + win.el.getHeight()
-										+ me.yTickSize);
+										+ this.yTickSize);
 							}
 						});
 					},
 
 					updateActiveWindow : function() {
-						var me = this, activeWindow = me.getActiveWindow(), last = me.lastActiveWindow;
+						var activeWindow = this.getActiveWindow(), last = this.lastActiveWindow;
 						if (activeWindow === last) {
 							return;
 						}
 
 						if (last) {
 							if (last.el.dom) {
-								last.addCls(me.inactiveWindowCls);
-								last.removeCls(me.activeWindowCls);
+								last.addCls(this.inactiveWindowCls);
+								last.removeCls(this.activeWindowCls);
 							}
 							last.active = false;
 						}
 
-						me.lastActiveWindow = activeWindow;
+						this.lastActiveWindow = activeWindow;
 
 						if (activeWindow) {
-							activeWindow.addCls(me.activeWindowCls);
-							activeWindow.removeCls(me.inactiveWindowCls);
+							activeWindow.addCls(this.activeWindowCls);
+							activeWindow.removeCls(this.inactiveWindowCls);
 							activeWindow.minimized = false;
 							activeWindow.active = true;
 						}
 
-						me.taskbar.setActiveButton(activeWindow
+						this.taskbar.setActiveButton(activeWindow
 								&& activeWindow.taskButton);
 					}
 				});

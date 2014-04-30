@@ -11,7 +11,8 @@ Ext.define('app.App', {
 
 	getModules : function() {
 		return [ //
-		new app.Notepad() //
+		new app.Notepad(), //
+		new app.TabWindow()
 		];//
 	},
 
@@ -36,8 +37,8 @@ Ext.define('app.App', {
 				} ]
 			}),
 
-			wallpaper : 'res/wallpapers/Blue-Sencha.jpg',
-			wallpaperStretch : false
+			wallpaper : 'res/wallpapers.png',
+			wallpaperStretch : true
 		});
 	},
 
@@ -50,7 +51,7 @@ Ext.define('app.App', {
 			title : 'Don Griffin',
 			iconCls : 'user',
 			height : 300,
-			width : 400
+			width : 300
 		});
 	},
 

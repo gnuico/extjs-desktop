@@ -1,13 +1,12 @@
-
 Ext.define('app.Notepad', {
-	extend : 'desktop.Module',
+
+	// extend : 'desktop.Module',
+
 	id : 'notepad',
 
-	init : function() {
-		this.launcher = {
-			text : 'Notepad',
-			iconCls : 'notepad'
-		}
+	launcher : {
+		text : 'Notepad',
+		iconCls : 'notepad'
 	},
 
 	createWindow : function() {
@@ -16,6 +15,12 @@ Ext.define('app.Notepad', {
 
 		if (!win) {
 			win = desktop.createWindow({
+
+				stateful : false,
+				isWindow : true,
+				constrainHeader : true,
+				minimizable : true,
+				maximizable : true,
 
 				id : 'notepad',
 				title : 'Notepad',
@@ -59,7 +64,7 @@ Ext.define('app.Notepad', {
 				_btn_bt : {
 
 					click : function() {
-						//var fdist = btn_hola.getSize();
+						// var fdist = btn_hola.getSize();
 						console.log('fdist');
 					}
 				},
@@ -77,7 +82,6 @@ Ext.define('app.Notepad', {
 						}
 					}
 				}
-
 			});
 		}
 		return win;
