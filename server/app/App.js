@@ -37,7 +37,7 @@ Ext.define('app.App', {
 				} ]
 			}),
 
-			wallpaper : 'res/wallpapers.png',
+			wallpaper : 'res/wallpaper.png',
 			wallpaperStretch : true
 		});
 	},
