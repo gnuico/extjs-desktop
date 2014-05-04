@@ -1,18 +1,3 @@
-/*!
- * Ext JS Library 4.0
- * Copyright(c) 2006-2011 Sencha Inc.
- * licensing@sencha.com
- * http://www.sencha.com/license
- */
-
-/**
- * @class Ext.ux.desktop.Desktop
- * @extends Ext.panel.Panel
- *          <p>
- *          This class manages the wallpaper, shortcuts and taskbar.
- *          </p>
- */
-
 Ext
 		.define(
 				'desktop.Desktop',
@@ -248,13 +233,6 @@ Ext
 						}
 					},
 
-					onWindowClose : function(win) {
-
-						this.lst_windows.remove(win);
-						this.taskbar.removeTaskButton(win.taskButton);
-						this.updateActiveWindow();
-					},
-
 					// ------------------------------------------------------
 					// Window context menu handlers
 
@@ -266,7 +244,8 @@ Ext
 					},
 
 					setTickSize : function(xTickSize, yTickSize) {
-						var xt = this.xTickSize = xTickSize, yt = this.yTickSize = (arguments.length > 1) ? yTickSize
+						var xt = this.xTickSize = xTickSize;
+						var yt = this.yTickSize = (arguments.length > 1) ? yTickSize
 								: xt;
 
 						this.lst_windows.each(function(win) {
@@ -299,60 +278,40 @@ Ext
 						});
 					},
 
-					createWindow : function(config, cls) {
-						var win;
-						var cfg = Ext.applyIf(config || {}, {
-							stateful : false,
-							isWindow : true,
-							constrainHeader : true,
-							minimizable : true,
-							maximizable : true
-						});
+					createWindow : function(config) {
 
-						cls = cls || Ext.window.Window;
-						win = this.add(new cls(cfg));
+						var win = this.add(new Ext.window.Window(config));
 
 						this.lst_windows.add(win);
 
 						win.taskButton = this.taskbar.addTaskButton(win);
 						win.animateTarget = win.taskButton.el;
 
-						win.on({
-							activate : this.updateActiveWindow,
-							beforeshow : this.updateActiveWindow,
-							deactivate : this.updateActiveWindow,
-							minimize : this.minimizeWindow,
-							destroy : this.onWindowClose,
-							scope : this
-						});
-
 						win
 								.on({
+									activate : this.updateActiveWindow,
+									beforeshow : this.updateActiveWindow,
+									deactivate : this.updateActiveWindow,
+
+									destroy : function(win) {
+
+										this.lst_windows.remove(win);
+										this.taskbar
+												.removeTaskButton(win.taskButton);
+										this.updateActiveWindow();
+									},
+
 									boxready : function() {
 										win.dd.xTickSize = this.xTickSize;
 										win.dd.yTickSize = this.yTickSize;
-
 										if (win.resizer) {
 											win.resizer.widthIncrement = this.xTickSize;
 											win.resizer.heightIncrement = this.yTickSize;
 										}
 									},
-									single : true
-								});
 
-						
-						win.doClose = function() {
-							win.doClose = Ext.emptyFn; // dblclick can call
-							// again...
-							win.el.disableShadow();
-							win.el.fadeOut({
-								listeners : {
-									afteranimate : function() {
-										win.destroy();
-									}
-								}
-							});
-						};
+									scope : this
+								});
 
 						return win;
 					},
@@ -387,11 +346,6 @@ Ext
 
 					getWindow : function(id) {
 						return this.lst_windows.get(id);
-					},
-
-					minimizeWindow : function(win) {
-						win.minimized = true;
-						win.hide();
 					},
 
 					restoreWindow : function(win) {

@@ -83,6 +83,25 @@ Ext.define('app.Notepad', {
 					}
 				}
 			});
+
+			win.doClose = function() {
+				win.el.disableShadow();
+				win.el.fadeOut({
+					listeners : {
+						afteranimate : function() {
+							win.destroy();
+						}
+					}
+				});
+			};
+			
+			win.on({				
+				minimize : function(win) {										
+					win.hide();
+				}
+			});
+			
+
 		}
 		return win;
 	}
