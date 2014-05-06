@@ -83,6 +83,7 @@ Ext.define('desktop.WebDesktop',
 						},
 						scope : this
 					} ],
+					
 					listeners : {
 						beforeshow : function(menu) {
 							var items = menu.items.items, win = menu.theWin;
@@ -213,8 +214,6 @@ Ext.define('desktop.WebDesktop',
 				return win;
 			},
 
-		
-
 			getWindow : function(id) {
 				return this.lst_windows.get(id);
 			},
@@ -283,13 +282,10 @@ Ext.define('desktop.WebDesktop',
 				var launcher;
 
 				Ext.each(me.modules, function(module) {
-
 					launcher = module.launcher;
-
 					if (launcher) {
 						launcher.handler = launcher.handler
 								|| Ext.bind(me.createW, me, [ module ]);
-
 						cfg.menu.push(module.launcher);
 					}
 				});

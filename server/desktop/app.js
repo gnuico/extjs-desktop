@@ -15,12 +15,6 @@ l = function(str) {
 	console.log(str);
 };
 
-Ext.onReady(function() {
-	// Ext.create('app.App');
-	// new app.Win().show();
-	// new desktop.App();
-});
-
 Ext.application({
 	name : 'app',
 	extend : 'Ext.container.Viewport',
