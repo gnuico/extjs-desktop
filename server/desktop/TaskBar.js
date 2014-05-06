@@ -14,6 +14,9 @@ Ext.define('desktop.TaskBar', {
     // child items to instantiate and render correctly.
     extend: 'Ext.toolbar.Toolbar',
 
+    
+    xtype : 'tb',
+    
     alias: 'widget.taskbar',
 
     cls: 'ux-taskbar',
