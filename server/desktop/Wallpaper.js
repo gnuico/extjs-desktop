@@ -13,7 +13,7 @@
 Ext.define('desktop.Wallpaper', {
     extend: 'Ext.Component',
 
-    alias: 'widget.wallpaper',
+    xtype: 'wallpaper',
 
     cls: 'ux-wallpaper',
     html: '<img src="'+Ext.BLANK_IMAGE_URL+'">',
@@ -22,11 +22,12 @@ Ext.define('desktop.Wallpaper', {
     wallpaper: null,
     stateful  : true,
     stateId  : 'desk-wallpaper',
+    
 
     afterRender: function () {
         var me = this;
         me.callParent();
-        me.setWallpaper(me.wallpaper, me.stretch);
+        me.setWallpaper(me.wallpaper);
     },
 
     applyState: function () {
@@ -41,10 +42,13 @@ Ext.define('desktop.Wallpaper', {
         return this.wallpaper && { wallpaper: this.wallpaper };
     },
 
-    setWallpaper: function (wallpaper, stretch) {
+    setWallpaper: function (wallpaper) {
+    	
+    	
+    	
         var me = this, imgEl, bkgnd;
 
-        me.stretch = (stretch !== false);
+        
         me.wallpaper = wallpaper;
 
         if (me.rendered) {
