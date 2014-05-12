@@ -2,14 +2,10 @@ Ext.define('desktop.TrayClock',
 		{
 			extend : 'Ext.toolbar.TextItem',
 
-			alias : 'widget.trayclock',
-
+			xtype : 'trayclock',			
 			cls : 'ux-desktop-trayclock',
-
 			html : '&#160;',
-
 			timeFormat : 'g:i A',
-
 			tpl : '{time}',
 
 			initComponent : function() {

@@ -15,6 +15,6 @@ Ext.define('desktop.Wallpaper', {
 		Ext.fly(imgEl).setStyle({
 			width : '100%',
 			height : '100%'
-		}).show();		
+		}).show();
 	}
 });

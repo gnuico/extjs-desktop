@@ -17,7 +17,7 @@ Ext
 					yTickSize : 1,
 
 					layout : 'fit',
-					
+
 					items : [
 							{
 
@@ -67,10 +67,6 @@ Ext
 
 					windowMenu : null,
 					lst_windows : Object,
-					
-					
-					
-					
 
 					constructor : function() {
 						var me = this;
@@ -90,7 +86,7 @@ Ext
 						this.app = me;
 
 						this.callParent();
-						
+
 						var a;
 					},
 
@@ -118,7 +114,6 @@ Ext
 						this.callParent();
 
 						var shortcutsView = this.items.getAt(1);
-
 						shortcutsView.on('itemclick',
 								function(dataView, record) {
 									var module = this.app

@@ -1,106 +1,98 @@
 Ext.define('desktop.TaskBar', {
 	extend : 'Ext.toolbar.Toolbar',
 
-	xtype : 'tb',
-
+	xtype : 'taskbar',
 	alias : 'widget.taskbar',
-
 	cls : 'ux-taskbar',
 
 	startBtnText : 'Start',
+	startApps : [],
+	startConfig : {},
 
 	initComponent : function() {
+
+		this.items = [ this.startmenu(), '-', this.windowBar(), '-',
+				this.trayclock() ];
+
+		this.callParent();
+
+		
+	},
+
+	/*
+	 * widgets
+	 */
+
+	startmenu : function() {
 		var me = this;
-
-		me.startMenu = new desktop.StartMenu(me.startConfig);
-
-		me.quickStart = new Ext.toolbar.Toolbar(me.getQuickStart());
-
-		me.windowBar = new Ext.toolbar.Toolbar(me.getWindowBarConfig());
-
-		me.tray = new Ext.toolbar.Toolbar(me.getTrayConfig());
-
-		me.items = [ {
+		var cfg = {
+			id : 'b',
 			xtype : 'button',
 			cls : 'ux-start-button',
 			iconCls : 'ux-start-button-icon',
-			menu : me.startMenu,
 			menuAlign : 'bl-tl',
-			text : me.startBtnText
-		}, me.quickStart, {
-			xtype : 'splitter',
-			html : '&#160;',
-			height : 14,
-			width : 2, // TODO - there should be a CSS way here
-			cls : 'x-toolbar-separator x-toolbar-separator-horizontal'
-		}, me.windowBar, '-', me.tray ];
-
-		me.callParent();
-	},
-
-	afterLayout : function() {
-		var me = this;
-		me.callParent();
-		me.windowBar.el.on('contextmenu', me.onButtonContextMenu, me);
-	},
-
-	getQuickStart : function() {
-		var me = this, ret = {
-			minWidth : 20,
-			width : Ext.themeName === 'neptune' ? 70 : 60,
-			items : [],
-			enableOverflow : true
+			text : this.startBtnText
 		};
 
-		Ext.each(this.quickStart, function(item) {
-			ret.items.push({
-				tooltip : {
-					text : item.name,
-					align : 'bl-tl'
-				},
-				// tooltip: item.name,
-				overflowText : item.name,
-				iconCls : item.iconCls,
-				module : item.module,
-				handler : me.onQuickStartClick,
-				scope : me
-			});
+		Ext.each(this.startApps, function(app) {
+			app.handler = function() {
+				var win = Ext.create('app.' + app.text);
+				me.addTaskButton(win);
+				win.show();
+				
+				tb = Ext.getCmp('tb');
+				tb.add('s');
+
+			};
+			me.startConfig.menu.push(app);
 		});
 
-		return ret;
+		cfg.menu = new desktop.StartMenu(this.startConfig);
+
+		return cfg;
 	},
 
-	getTrayConfig : function() {
-		var ret = {
-			items : this.trayItems
-		};
-		delete this.trayItems;
-		return ret;
-	},
-
-	getWindowBarConfig : function() {
+	windowBar : function() {
 		return {
+			id : 'tb',
+			xtype : 'toolbar',
 			flex : 1,
 			cls : 'ux-desktop-windowbar',
-			items : [ '&#160;' ],
 			layout : {
 				overflowHandler : 'Scroller'
 			}
 		};
 	},
 
+	trayclock : function() {
+		return {
+			xtype : 'trayclock'
+		};
+	},
+
+	listeners : {
+		afterrender : function() {
+			var a = Ext.getCmp('tb');
+
+		}
+	},
+
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+
+	afterLayout : function() {
+		var me = this;
+		me.callParent();
+		// me.windowBar().el.on('contextmenu', me.onButtonContextMenu, me);
+	},
+
 	getWindowBtnFromEl : function(el) {
 		var c = this.windowBar.getChildByElement(el);
 		return c || null;
-	},
-
-	onQuickStartClick : function(btn) {
-		var module = this.app.getModule(btn.module), window;
-
-		if (module) {
-			window = module.createWindow();
-			window.show();
-		}
 	},
 
 	onButtonContextMenu : function(e) {
@@ -148,9 +140,7 @@ Ext.define('desktop.TaskBar', {
 			win : win
 		};
 
-		var cmp = this.windowBar.add(config);
-		cmp.toggle(true);
-		return cmp;
+		return config;
 	},
 
 	removeTaskButton : function(btn) {
