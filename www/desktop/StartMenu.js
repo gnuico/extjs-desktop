@@ -2,35 +2,32 @@ Ext.define('desktop.StartMenu', {
 	extend : 'Ext.panel.Panel',
 
 	xtype : 'startmenu',
-
-	ariaRole : 'menu',
-
 	cls : 'x-menu ux-start-menu',
 	defaultAlign : 'bl-tl',
-	iconCls : 'user',
+
 	floating : true,
 	shadow : true,
-	width : 300,
+	
 
 	initComponent : function() {
-		var me = this;
-		var menu = me.menu;
 
-		me.menu = new Ext.menu.Menu({
+		var me = this;
+		
+
+		var menu = new Ext.menu.Menu({
 			cls : 'ux-start-menu-body',
 			border : false,
 			floating : false,
-			items : menu
+			items : this.menu
 		});
-		me.menu.layout.align = 'stretch';
+		
 
-		me.items = [ me.menu ];
-		me.layout = 'fit';
+		this.items = [ menu ];
 
-		Ext.menu.Manager.register(me);
-		me.callParent();
+		Ext.menu.Manager.register(this);
+		this.callParent();
 
-		me.toolbar = new Ext.toolbar.Toolbar(Ext.apply({
+		this.toolbar = new Ext.toolbar.Toolbar(Ext.apply({
 			dock : 'right',
 			cls : 'ux-start-menu-toolbar',
 			vertical : true,
@@ -44,21 +41,10 @@ Ext.define('desktop.StartMenu', {
 					});
 				}
 			}
-		}, me.toolConfig));
+		}, this.toolConfig));
 
-		me.toolbar.layout.align = 'stretch';
-		me.addDocked(me.toolbar);
+		this.toolbar.layout.align = 'stretch';
+		this.addDocked(this.toolbar);
 
-		delete me.toolItems;
-	},
-
-	addMenuItem : function() {
-		var cmp = this.menu;
-		cmp.add.apply(cmp, arguments);
-	},
-
-	addToolItem : function() {
-		var cmp = this.toolbar;
-		cmp.add.apply(cmp, arguments);
 	}
 });

@@ -1,9 +1,6 @@
 Ext.define('app.User', {
 	extend : 'Ext.window.Window',
 
-	
-	
-
 	stateful : false,
 	isWindow : true,
 	constrainHeader : true,
@@ -11,7 +8,6 @@ Ext.define('app.User', {
 	maximizable : true,
 	closable : true,
 
-	
 	width : 600,
 	height : 400,
 
@@ -61,17 +57,6 @@ Ext.define('app.User', {
 	_btn_bt : {
 		click : function() { // var fdist = btn_hola.getSize();
 			console.log('click bt MM');
-		}
-	},
-
-	listeners : {
-
-		minimize : function(win) {
-			win.hide();
-		},
-
-		close : function(win) {
-			win.destroy();
 		}
 	}
 });

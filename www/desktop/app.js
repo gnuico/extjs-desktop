@@ -11,7 +11,7 @@ Ext.require([//
 'app.TabWindow',//
 'app.Winn',//
 
- ]);//
+]);//
 
 Ext.application({
 	name : 'app',
@@ -30,7 +30,7 @@ Ext.application({
 		this.taskbar() //
 
 		];
-		
+
 		this.callParent();
 	},
 
@@ -61,13 +61,11 @@ Ext.application({
 
 			startConfig : {
 				menu : [],
-				title : 'App',
-				iconCls : 'user',
+				title : 'App',				
 				height : 300,
 				width : 300
 			}
 		};
-		cfg.startConfig.menu=cfg.startApps;
 		return cfg;
 	}
 });
