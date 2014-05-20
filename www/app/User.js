@@ -1,12 +1,8 @@
-Ext.define('app.MM', {
+Ext.define('app.User', {
 	extend : 'Ext.window.Window',
 
-	id : 'mm',
-
-	launcher : {
-		text : 'MM',
-		iconCls : 'notepad'
-	},
+	
+	
 
 	stateful : false,
 	isWindow : true,
@@ -15,7 +11,7 @@ Ext.define('app.MM', {
 	maximizable : true,
 	closable : true,
 
-	title : 'MM',
+	
 	width : 600,
 	height : 400,
 
@@ -46,19 +42,17 @@ Ext.define('app.MM', {
 	} ],
 
 	initComponent : function() {
-		this['a'] = 'HOLA mundo';
 
 		this.callParent();
-		var me = this;
 
-		Ext.each(me.items.items, function(item) {
-			me[item.id] = Ext.getCmp(item.id);
-			me[item.id].on(me['_' + item.id]);
+		var me = this;
+		Ext.each(this.items.items, function(item) {
+			Ext.getCmp(item.id).on(me['_' + item.id]);
 		});
 
 	},
 
-	_btn_hola : {	
+	_btn_hola : {
 		click : function() {
 			console.log('click MM');
 		}

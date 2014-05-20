@@ -1,15 +1,17 @@
 Ext.require([//
+
 'desktop.ShortcutModel',//	
 'desktop.StartMenu',//
 'desktop.TaskBar',//
 'desktop.TrayClock',//
 'desktop.Wallpaper',//
-'desktop.WebDesktop', //
 
+'app.User',//
 'app.Notepad',//
 'app.TabWindow',//
 'app.Winn',//
-'app.MM' ]);//
+
+ ]);//
 
 Ext.application({
 	name : 'app',
@@ -45,14 +47,15 @@ Ext.application({
 	},
 
 	taskbar : function() {
-		return {
+		var cfg = {
 			xtype : 'taskbar',
 			region : 'south',
 
 			startBtnText : 'Debian',
 
 			startApps : [ {
-				text : 'MM',
+				clazz : 'app.User',
+				text : 'User',
 				iconCls : 'notepad'
 			} ],
 
@@ -64,5 +67,7 @@ Ext.application({
 				width : 300
 			}
 		};
+		cfg.startConfig.menu=cfg.startApps;
+		return cfg;
 	}
 });

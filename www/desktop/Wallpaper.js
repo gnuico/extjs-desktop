@@ -11,7 +11,7 @@ Ext.define('desktop.Wallpaper', {
 		var imgEl = this.el.dom.firstChild;
 		imgEl.src = this.wallpaper;
 
-		this.el.removeCls('ux-wallpaper-tiled');
+		//this.el.removeCls('ux-wallpaper-tiled');
 		Ext.fly(imgEl).setStyle({
 			width : '100%',
 			height : '100%'

@@ -9,14 +9,21 @@ Ext.define('desktop.TaskBar', {
 	startApps : [],
 	startConfig : {},
 
+
 	initComponent : function() {
 
-		this.items = [ this.startmenu(), '-', this.windowBar(), '-',
-				this.trayclock() ];
+		this.items = [ 
 
-		this.callParent();
+			this.startmenu(), 
+			'-', 
+			this.windowBar(), 
+			'-',
+			this.trayclock() 
+		];
 
-		
+		this.callParent();	
+
+		this.wb = Ext.getCmp('windowbar');	
 	},
 
 	/*
@@ -25,6 +32,26 @@ Ext.define('desktop.TaskBar', {
 
 	startmenu : function() {
 		var me = this;
+		
+
+		this.startApps.forEach(function(app) {
+			app.handler = function() {		
+				var win = Ext.create(app.clazz);
+
+				win.title=app.text;
+				win.iconCls=app.iconCls;
+
+				win.on({
+					destroy : function(win) {
+						var wb = Ext.getCmp('windowbar');
+						wb.remove(win.pid);
+					},
+				});				
+				me.wb.add(me.addTaskButton(win));
+				win.show();
+			};			
+		});
+
 		var cfg = {
 			id : 'b',
 			xtype : 'button',
@@ -33,28 +60,15 @@ Ext.define('desktop.TaskBar', {
 			menuAlign : 'bl-tl',
 			text : this.startBtnText
 		};
-
-		Ext.each(this.startApps, function(app) {
-			app.handler = function() {
-				var win = Ext.create('app.' + app.text);
-				me.addTaskButton(win);
-				win.show();
-				
-				tb = Ext.getCmp('tb');
-				tb.add('s');
-
-			};
-			me.startConfig.menu.push(app);
-		});
-
 		cfg.menu = new desktop.StartMenu(this.startConfig);
 
 		return cfg;
 	},
 
 	windowBar : function() {
-		return {
-			id : 'tb',
+		var me = this;
+		var cfg = {
+			id : 'windowbar',
 			xtype : 'toolbar',
 			flex : 1,
 			cls : 'ux-desktop-windowbar',
@@ -62,19 +76,17 @@ Ext.define('desktop.TaskBar', {
 				overflowHandler : 'Scroller'
 			}
 		};
+
+
+		
+
+		return cfg;
 	},
 
 	trayclock : function() {
 		return {
 			xtype : 'trayclock'
 		};
-	},
-
-	listeners : {
-		afterrender : function() {
-			var a = Ext.getCmp('tb');
-
-		}
 	},
 
 	/*
@@ -84,25 +96,30 @@ Ext.define('desktop.TaskBar', {
 	 * 
 	 */
 
-	afterLayout : function() {
-		var me = this;
-		me.callParent();
-		// me.windowBar().el.on('contextmenu', me.onButtonContextMenu, me);
+
+	addTaskButton : function(win) {
+
+		win.pid='sss';
+
+		var config = {	
+			id : win.pid,
+			iconCls : win.iconCls,
+			enableToggle : true,
+			toggleGroup : 'all',
+			width : 140,
+			margins : '0 2 0 3',
+			text : Ext.util.Format.ellipsis(win.title, 20),
+			listeners : {
+				click : this.onWindowBtnClick,
+				scope : this
+			},
+			win : win			
+		};
+
+		return config;
 	},
 
-	getWindowBtnFromEl : function(el) {
-		var c = this.windowBar.getChildByElement(el);
-		return c || null;
-	},
 
-	onButtonContextMenu : function(e) {
-		var me = this, t = e.getTarget(), btn = me.getWindowBtnFromEl(t);
-		if (btn) {
-			e.stopEvent();
-			me.windowMenu.theWin = btn.win;
-			me.windowMenu.showBy(t);
-		}
-	},
 
 	onWindowBtnClick : function(btn) {
 		var win = btn.win;
@@ -125,26 +142,11 @@ Ext.define('desktop.TaskBar', {
 		}
 	},
 
-	addTaskButton : function(win) {
-		var config = {
-			iconCls : win.iconCls,
-			enableToggle : true,
-			toggleGroup : 'all',
-			width : 140,
-			margins : '0 2 0 3',
-			text : Ext.util.Format.ellipsis(win.title, 20),
-			listeners : {
-				click : this.onWindowBtnClick,
-				scope : this
-			},
-			win : win
-		};
-
-		return config;
-	},
 
 	removeTaskButton : function(btn) {
-		var found, me = this;
+		var found;
+		var me = this;
+
 		me.windowBar.items.each(function(item) {
 			if (item === btn) {
 				found = item;
@@ -156,6 +158,38 @@ Ext.define('desktop.TaskBar', {
 		}
 		return found;
 	},
+
+
+
+
+
+
+
+
+
+	afterLayout : function() {
+		var me = this;
+		me.callParent();
+		// me.windowBar().el.on('contextmenu', me.onButtonContextMenu, me);
+	},
+
+	getWindowBtnFromEl : function(el) {
+		var c = this.windowBar.getChildByElement(el);
+		return c || null;
+	},
+
+	onButtonContextMenu : function(e) {
+		var me = this, t = e.getTarget(), btn = me.getWindowBtnFromEl(t);
+		if (btn) {
+			e.stopEvent();
+			me.windowMenu.theWin = btn.win;
+			me.windowMenu.showBy(t);
+		}
+	},
+
+
+
+
 
 	setActiveButton : function(btn) {
 		if (btn) {
