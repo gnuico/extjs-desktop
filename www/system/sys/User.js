@@ -1,19 +1,8 @@
 Ext.define('system.sys.User', {
-	extend : 'Ext.window.Window',
-
-	stateful : false,
-	isWindow : true,
-	constrainHeader : true,
-	minimizable : true,
-	maximizable : true,
-	closable : true,
+	extend : 'system.lib.Window',
 
 	width : 600,
 	height : 400,
-
-	animCollapse : false,
-	border : false,
-	hideMode : 'offsets',
 
 	layout : 'border',
 
