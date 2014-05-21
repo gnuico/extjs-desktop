@@ -6,6 +6,8 @@ Ext.require([//
 
 'system.desktop.Wallpaper',//
 
+'system.lib.Window',//
+
 'system.sys.User',//
 
 ]);//
