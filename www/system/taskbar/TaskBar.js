@@ -1,4 +1,4 @@
-Ext.define('desktop.TaskBar', {
+Ext.define('system.taskbar.TaskBar', {
 	extend : 'Ext.toolbar.Toolbar',
 
 	xtype : 'taskbar',
@@ -39,7 +39,7 @@ Ext.define('desktop.TaskBar', {
 		};
 
 		this.startConfig.menu = this.startApps;
-		cfg.menu = new desktop.StartMenu(this.startConfig);
+		cfg.menu = new system.taskbar.StartMenu(this.startConfig);
 
 		return cfg;
 	},

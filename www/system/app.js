@@ -1,15 +1,12 @@
 Ext.require([//
+	
+'system.taskbar.StartMenu',//
+'system.taskbar.TaskBar',//
+'system.taskbar.TrayClock',//
 
-'desktop.ShortcutModel',//	
-'desktop.StartMenu',//
-'desktop.TaskBar',//
-'desktop.TrayClock',//
-'desktop.Wallpaper',//
+'system.desktop.Wallpaper',//
 
-'app.User',//
-'app.Notepad',//
-'app.TabWindow',//
-'app.Winn',//
+'system.sys.User',//
 
 ]);//
 
@@ -54,7 +51,7 @@ Ext.application({
 			startBtnText : 'Debian',
 
 			startApps : [ {
-				clazz : 'app.User',
+				clazz : 'system.sys.User',
 				text : 'User',
 				iconCls : 'notepad'
 			} ],

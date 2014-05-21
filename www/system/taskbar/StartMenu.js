@@ -1,4 +1,4 @@
-Ext.define('desktop.StartMenu', {
+Ext.define('system.taskbar.StartMenu', {
 	extend : 'Ext.panel.Panel',
 
 	xtype : 'startmenu',
