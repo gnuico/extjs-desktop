@@ -7,3 +7,4 @@ app.set('view engine', 'html');
 app.use(express.static(path.join(__dirname, 'server')));
 
 app.listen(5000);
+
