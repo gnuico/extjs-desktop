@@ -1,4 +1,4 @@
-Ext.define('desktop.Wallpaper', {
+Ext.define('system.desktop.Wallpaper', {
 	extend : 'Ext.Component',
 
 	xtype : 'wallpaper',

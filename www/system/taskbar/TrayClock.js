@@ -1,8 +1,8 @@
-Ext.define('desktop.TrayClock',
+Ext.define('system.taskbar.TrayClock',
 		{
 			extend : 'Ext.toolbar.TextItem',
 
-			xtype : 'trayclock',			
+			xtype : 'trayclock',
 			cls : 'ux-desktop-trayclock',
 			html : '&#160;',
 			timeFormat : 'g:i A',
